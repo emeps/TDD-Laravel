@@ -11,7 +11,7 @@ class UpdateBookRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,13 @@ class UpdateBookRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'title' => 'required',
+        ];
+    }
+    public function messages(): array
+    {
+        return [
+            'required' => 'Este campo é obrigatório!'
         ];
     }
 }

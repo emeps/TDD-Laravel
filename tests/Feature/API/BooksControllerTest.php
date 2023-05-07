@@ -81,16 +81,28 @@ class BooksControllerTest extends TestCase
 
     }
 
+    public function test_post_book_should_validate_when_try_create_a_invalid_book(){
+
+        //Teste da rota POST API
+        $response = $this->postJson('/api/books', []);
+        //Retorna status created
+        $response->assertStatus(422);
+
+        $response->assertJson(function (AssertableJson $json){
+            $json->hasAll(['message', 'errors']);
+            $json->where('errors.title.0', 'Este campo é obrigatório!')->where('errors.isbn.0', 'Este campo é obrigatório!');
+
+        });
+    }
+    
     public function test_post_book_endpoint(){
         //Cria dados em formato de objeto (model)
         $book = Book::factory(1)->makeOne()->toArray();
-
         //Teste da rota POST API
         $response = $this->postJson('/api/books', $book);
 
         //Retorna status created
         $response->assertStatus(201);
-
         $response->assertJson(function (AssertableJson $json) use($book){
 
             $json->hasAll(['id', 'title', 'isbn'])->etc();
@@ -100,6 +112,7 @@ class BooksControllerTest extends TestCase
                 'isbn'=> $book['isbn'],
             ])->etc();
         });
+
     }
 
     public function test_put_book_endpoint(){
@@ -150,5 +163,5 @@ class BooksControllerTest extends TestCase
 
         $response->assertStatus(204);
     }
-    
+
 }
